@@ -255,7 +255,7 @@ for errors. Therefore, something like this:
         return @words;
     }
 
-...will cause 'foo' to be returned, because $words has not been modified by the
+...will cause 'foo' to be returned, because @words has not been modified by the
 time the return value is calculated.
 
 In order to effect changes in return values in cleanup (a questionable
