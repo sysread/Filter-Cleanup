@@ -1,21 +1,21 @@
 Filter::Cleanup
 
 Filter::Cleanup provides a simple way to deal with cleaning up after multiple
-error conditions modeled after the D programming language's C<scope(exit)>
+error conditions modeled after the D programming language's scope(exit)
 mechanism.
 
-Each C<cleanup> block operates in essentially the same manner as a C<finally>
+Each cleanup block operates in essentially the same manner as a finally
 block in languages supporting try/catch/finally style error handling.
 
-C<cleanup> blocks may be placed anywhere in a scope. All statements lexically
-scoped after the C<cleanup> block will be wrapped in an C<eval>. Should an error
-be triggered within the block, the C<cleanup> statement will be called before
-any error is rethrown (using C<croak>).
+cleanup blocks may be placed anywhere in a scope. All statements lexically
+scoped after the cleanup block will be wrapped in an eval. Should an error
+be triggered within the block, the cleanup statement will be called before
+any error is rethrown (using croak).
 
-Within the C<cleanup> block, the status of C<$@> may be inspected normally.
+Within the cleanup block, the status of $@ may be inspected normally.
 
-Multiple C<cleanup> blocks stack, and each I<MUST> be followed by a semi-colon
-to ensure proper organization of the outputted code. C<cleanup>s are executed
+Multiple cleanup blocks stack, and each MUST be followed by a semi-colon
+to ensure proper organization of the outputted code. cleanups are executed
 in reverse order (it's a stack, see?) and may be nested, although this defeats
 the purpose. The reason for reverse execution is that each cleanup represents
 another nested level of evals and clean-up code.
@@ -92,7 +92,7 @@ The following code would be generated:
     }
 
 Internally, PPI is used to parse the module and generate the new code. This is
-because there are so many different forms which could proceed a C<cleanup> block
+because there are so many different forms which could proceed a cleanup block
 that there is no more efficient way to ensure that valid code is emitted. PPI
 has proven to be stable, robust, and very reasonably efficient.
 
