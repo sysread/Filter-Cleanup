@@ -1,4 +1,4 @@
-Filter-Cleanup
+Filter::Cleanup
 
 Filter::Cleanup provides a simple way to deal with cleaning up after multiple
 error conditions modeled after the D programming language's C<scope(exit)>
