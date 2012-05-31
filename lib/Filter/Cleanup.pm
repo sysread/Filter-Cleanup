@@ -1,8 +1,5 @@
 package Filter::Cleanup;
 
-use strict;
-use warnings;
-
 use Carp;
 use Filter::Util::Call;
 use PPI;
