@@ -99,9 +99,9 @@ has proven to be stable, robust, and very reasonably efficient.
 
 MODIFYING RETURN VARIABLES WITHIN A CLEANUP BLOCK
 
-This can sometimes have surprising results due to the manner in which C<cleanup>
-blocks are evaluated. By the time the C<cleanup> block executes, the result of
-evaluating the protected code has already been determined and stored. C<Cleanup>
+This can sometimes have surprising results due to the manner in which cleanup
+blocks are evaluated. By the time the cleanup block executes, the result of
+evaluating the protected code has already been determined and stored. Cleanup
 blocks are then processed, and their results are discarded after being inspected
 for errors. Therefore, something like this:
 
@@ -131,7 +131,7 @@ practice, but hey, I don't judge), a reference is required:
         return $words;
     }
     
-The above code will return C<['foo', 'bar', 'baz', 'bat']>.
+The above code will return ['foo', 'bar', 'baz', 'bat'].
 
 
 INSTALLATION
