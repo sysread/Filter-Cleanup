@@ -96,6 +96,44 @@ because there are so many different forms which could proceed a cleanup block
 that there is no more efficient way to ensure that valid code is emitted. PPI
 has proven to be stable, robust, and very reasonably efficient.
 
+
+MODIFYING RETURN VARIABLES WITHIN A CLEANUP BLOCK
+
+This can sometimes have surprising results due to the manner in which C<cleanup>
+blocks are evaluated. By the time the C<cleanup> block executes, the result of
+evaluating the protected code has already been determined and stored. C<Cleanup>
+blocks are then processed, and their results are discarded after being inspected
+for errors. Therefore, something like this:
+
+    sub test {
+        my @words = ('foo');
+        
+        cleanup { push @words, 'bat' };
+        cleanup { push @words, 'baz' };
+        cleanup { push @words, 'bar' };
+        
+        return @words;
+    }
+
+...will cause 'foo' to be returned, because $words has not been modified by the
+time the return value is calculated.
+
+In order to effect changes in return values in cleanup (a questionable
+practice, but hey, I don't judge), a reference is required:
+
+    sub test {
+        my $words = ['foo'];
+        
+        cleanup { push @$words, 'bat' };
+        cleanup { push @$words, 'baz' };
+        cleanup { push @$words, 'bar' };
+        
+        return $words;
+    }
+    
+The above code will return C<['foo', 'bar', 'baz', 'bat']>.
+
+
 INSTALLATION
 
 To install this module, run the following commands:
@@ -104,6 +142,7 @@ To install this module, run the following commands:
 	make
 	make test
 	make install
+
 
 SUPPORT AND DOCUMENTATION
 

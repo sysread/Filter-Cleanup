@@ -23,6 +23,7 @@ sub import {
     };
 
     filter_add(bless $self, $class);
+    return $self;
 }
 
 sub filter {
@@ -81,7 +82,7 @@ sub _transform {
         }
 
         # Generate code
-        my $template = '{use Symbol;my($g,$e)=(gensym)x2;$g=eval{%s};$e=$@;{%s}if($e){use Carp;croak $e}else{$g}}';
+        my $template = '{use Symbol;my($g,$e)=(gensym)x2;$g=eval{%s};$e=$@;%sif($e){use Carp;croak $e}else{$g}}';
         my $code = sprintf($template, join('', map {$_->content} @sibs), $block->content);
 
         # Replace $statement with new code
@@ -236,6 +237,42 @@ because there are so many different forms which could proceed a C<cleanup> block
 that there is no more efficient way to ensure that valid code is emitted. PPI
 has proven to be stable, robust, and very reasonably efficient.
 
+=head2 Modifying return variables within a cleanup block
+
+This can sometimes have surprising results due to the manner in which C<cleanup>
+blocks are evaluated. By the time the C<cleanup> block executes, the result of
+evaluating the protected code has already been determined and stored. C<Cleanup>
+blocks are then processed, and their results are discarded after being inspected
+for errors. Therefore, something like this:
+
+    sub test {
+        my @words = ('foo');
+        
+        cleanup { push @words, 'bat' };
+        cleanup { push @words, 'baz' };
+        cleanup { push @words, 'bar' };
+        
+        return @words;
+    }
+
+...will cause 'foo' to be returned, because $words has not been modified by the
+time the return value is calculated.
+
+In order to effect changes in return values in cleanup (a questionable
+practice, but hey, I don't judge), a reference is required:
+
+    sub test {
+        my $words = ['foo'];
+        
+        cleanup { push @$words, 'bat' };
+        cleanup { push @$words, 'baz' };
+        cleanup { push @$words, 'bar' };
+        
+        return $words;
+    }
+    
+The above code will return C<['foo', 'bar', 'baz', 'bat']>.
+
 =head1 SUBROUTINES
 
 =over
@@ -243,7 +280,8 @@ has proven to be stable, robust, and very reasonably efficient.
 =item import
 
 Importing Filter::Cleanup makes the C<cleanup> keyword available in the
-importing scope.
+importing scope. Adding C<debug=>1> will cause the generated code to be
+printed to C<STDERR> with line numbers.
 
 =item filter
 
