@@ -1,5 +1,7 @@
 package Filter::Cleanup;
 
+our $VERSION = '0.01';
+
 use Carp;
 use Filter::Util::Call;
 use PPI;
@@ -8,19 +10,16 @@ use PPI::Document::Fragment;
 
 use constant READ_BYTES => 999_999_999;
 
-our $VERSION = '0.01';
-
 sub import {
     my ($class, %args) = @_;
-    my $pad   = $args{pad} || 0;
-    my $debug = $args{debug};
+    my $debug = $args{debug} || 0;
+    my $pad   = $args{pad}   || 0;
+    
+    my $self = bless {}, $class;
+    $self->{dbg} = $debug;
+    $self->{pad} = $pad;
 
-    my $self = {
-        pad   => $pad,
-        debug => $debug,
-    };
-
-    filter_add(bless $self, $class);
+    filter_add($self);
     return $self;
 }
 
@@ -29,9 +28,9 @@ sub filter {
     my $status = filter_read(READ_BYTES);
     my $source = $_;
 
-    $_ = _transform($source);
+    $source = _transform($source);
 
-    if ($self->{debug}) {
+    if ($self->{dbg} && $source ne $_) {
         my @lines = split /\n/, $_;
         if (@lines) {
             warn sprintf("\n=(%s) expansion\n", __PACKAGE__);
@@ -43,7 +42,8 @@ sub filter {
             warn "=cut\n\n";
         }
     }
-
+    
+    $_ = $source;
     return $status;
 }
 

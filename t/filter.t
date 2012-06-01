@@ -1,25 +1,17 @@
 use strict;
 use warnings;
 use Carp;
-use Test::More qw/no_plan/;
-
+use Test::More tests => 7;
+require Filter::Cleanup;
 
 { # import
-    require Filter::Cleanup;
-    
-    my $filter = Filter::Cleanup->import();
+    my $filter = Filter::Cleanup->import;
     ok($filter->isa('Filter::Cleanup'), 'import');
-    ok(!$filter->{debug}, 'import');
+    ok(!$filter->{dbg}, 'import');
     ok($filter->{pad} == 0, 'import');
-    
-    $filter = Filter::Cleanup->import(debug => 1, pad => 2);
-    ok($filter->{debug}, 'import');
-    ok($filter->{pad} == 2, 'import');
 }
 
 { # _transform
-    require Filter::Cleanup;
-    
     my $code = q/
         sub test {
             my $data = [];
