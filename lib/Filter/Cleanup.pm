@@ -8,9 +8,7 @@ use PPI::Document::Fragment;
 
 use constant READ_BYTES => 999_999_999;
 
-
 our $VERSION = '0.01';
-
 
 sub import {
     my ($class, %args) = @_;
