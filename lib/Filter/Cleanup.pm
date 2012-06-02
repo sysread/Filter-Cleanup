@@ -8,7 +8,7 @@ use PPI;
 use PPI::Document;
 use PPI::Document::Fragment;
 
-use constant READ_BYTES => 999_999_999;
+use constant READ_BYTES => 999_999;
 
 sub import {
     my ($class, %args) = @_;
