@@ -1,11 +1,14 @@
-package Filter::Cleanup;
-# ABSTRACT: Execute cleanup statements when scope closes, regardless of errors
+=pod
 
-=cut
+=encoding UTF-8
 
 =head1 NAME
 
-Filter::Cleanup
+Filter::Cleanup - Execute cleanup statements when scope closes, regardless of errors
+
+=head1 VERSION
+
+version 0.01
 
 =head1 SYNOPSIS
 
@@ -21,6 +24,10 @@ Defines a block of code to be evaluated once the current scope has completed
 execution. If an error is thrown during the execution of statements after the
 C<cleanup> block, the error is trapped and rethrown after the C<cleanup> block
 is executed.
+
+=head1 NAME
+
+Filter::Cleanup
 
 =head1 CAVEATS
 
@@ -53,34 +60,15 @@ Jeff Ober L<sysread@fastmail.fm>
 
 Perl5
 
+=head1 AUTHOR
+
+Jeff Ober <sysread@fastmail.fm>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2017 by Jeff Ober.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
-
-use 5.012;
-use strict;
-use warnings;
-use Keyword::Declare;
-
-our $CLEANUP;
-
-sub import {
-  keyword cleanup (Block $cl, /\s*;\s/? $br) :then(Statement* $st='1') {
-    qq{
-      local \$Filter::Cleanup::CLEANUP = Filter::Cleanup->new(sub $cl);
-      $st
-    };
-  }
-}
-
-sub new {
-  my ($class, $code) = @_;
-  bless $code, $class;
-}
-
-sub DESTROY {
-  my $self = shift;
-  if (defined $self) {
-    $self->();
-  }
-}
-
-1;
