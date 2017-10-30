@@ -8,7 +8,7 @@ Filter::Cleanup - Execute cleanup statements when scope closes, regardless of er
 
 =head1 VERSION
 
-version 0.01
+version 0.03
 
 =head1 SYNOPSIS
 
