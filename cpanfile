@@ -1,4 +1,4 @@
-requires 'perl', '5.014';
+requires 'perl', '5.012';
 conflicts 'perl', '>= 5.020, < 5.022'; # regex bug
 
 requires 'Keyword::Declare', '0.001006';
